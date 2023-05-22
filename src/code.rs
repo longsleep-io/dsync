@@ -310,11 +310,19 @@ fn build_table_fns(
     #[cfg(not(feature = "tsync"))]
     let tsync = "";
     #[cfg(feature = "async")]
-    let async_keyword = if table_options.get_async() { " async" } else { "" };
+    let async_keyword = if table_options.get_async() {
+        " async"
+    } else {
+        ""
+    };
     #[cfg(not(feature = "async"))]
     let async_keyword = "";
     #[cfg(feature = "async")]
-    let await_keyword = if table_options.get_async() { ".await" } else { "" };
+    let await_keyword = if table_options.get_async() {
+        ".await"
+    } else {
+        ""
+    };
     #[cfg(not(feature = "async"))]
     let await_keyword = "";
     let struct_name = &table.struct_name;
@@ -448,23 +456,43 @@ fn build_imports(table: &ParsedTableMacro, config: &GenerationConfig) -> String 
         .collect::<Vec<String>>()
         .join("\n");
     #[cfg(feature = "async")]
-    let async_imports = if table_options.get_async() { "\nuse diesel_async::RunQueryDsl;" } else { "" };
+    let async_imports = if table_options.get_async() {
+        "\nuse diesel_async::RunQueryDsl;"
+    } else {
+        ""
+    };
     #[cfg(not(feature = "async"))]
     let async_imports = "";
+    let fns_imports = if config.with_fns {
+        indoc! {"
+        use diesel::QueryResult;
+        "}
+    } else {
+        ""
+    };
+    let connection_type_alias = if config.with_fns {
+        format!(
+            "\ntype Connection = {connection_type};",
+            connection_type = config.connection_type,
+        )
+    } else {
+        "".to_string()
+    };
     format!(
         indoc! {"
         use crate::diesel::*;
         use crate::schema::*;
-        use diesel::QueryResult;
+        {fns_imports}
         use serde::{{Deserialize, Serialize}};{async_imports}
-        {belongs_imports}
-
-        type Connection = {connection_type};
+        {belongs_imports}{connection_type_alias}
     "},
-        connection_type = config.connection_type,
-        belongs_imports = belongs_imports,
+        fns_imports = fns_imports,
         async_imports = async_imports,
+        belongs_imports = belongs_imports,
+        connection_type_alias = connection_type_alias,
     )
+    .trim_end()
+    .to_string()
 }
 
 pub fn generate_for_table(table: ParsedTableMacro, config: &GenerationConfig) -> String {
@@ -480,8 +508,12 @@ pub fn generate_for_table(table: ParsedTableMacro, config: &GenerationConfig) ->
     structs.push('\n');
     structs.push_str(&update_struct.code());
 
-    let functions = build_table_fns(&table, config, create_struct, update_struct);
+    let functions = if config.with_fns {
+        build_table_fns(&table, config, create_struct, update_struct)
+    } else {
+        "".to_string()
+    };
     let imports = build_imports(&table, config);
 
-    format!("{FILE_SIGNATURE}\n\n{imports}\n{structs}\n{functions}")
+    format!("{FILE_SIGNATURE}\n\n{imports}\n\n{structs}\n{functions}")
 }

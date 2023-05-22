@@ -54,6 +54,12 @@ struct Args {
         help = "Required: rust type which describes a connection, for example: `diesel::r2d2::PooledConnection<diesel::r2d2::ConnectionManager<diesel::PgConnection>>`"
     )]
     connection_type: String,
+
+    #[structopt(
+        long = "no-crud",
+        help = "Skip automatically generated CRUD functions for all structs"
+    )]
+    no_crud: bool,
 }
 
 fn main() {
@@ -79,6 +85,7 @@ fn main() {
             default_table_options,
             table_options: HashMap::from([]),
             connection_type: args.connection_type,
+            with_fns: !args.no_crud,
         },
     );
 }
