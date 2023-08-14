@@ -1,10 +1,10 @@
-/* This file is generated and managed by dsync */
+/* @generated and managed by dsync */
 
 use crate::diesel::*;
 use crate::schema::*;
 use diesel::QueryResult;
-use serde::{Deserialize, Serialize};
 
+use serde::{Deserialize, Serialize};
 
 type Connection = diesel::r2d2::PooledConnection<diesel::r2d2::ConnectionManager<diesel::PgConnection>>;
 
@@ -38,7 +38,7 @@ pub struct CreateFangTask {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Queryable, Insertable, AsChangeset)]
+#[derive(Debug, Serialize, Deserialize, Clone, Queryable, Insertable, AsChangeset, Default)]
 #[diesel(table_name=fang_tasks)]
 pub struct UpdateFangTask {
     pub metadata: Option<serde_json::Value>,

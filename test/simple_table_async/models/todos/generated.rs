@@ -1,11 +1,11 @@
-/* This file is generated and managed by dsync */
+/* @generated and managed by dsync */
 
 use crate::diesel::*;
 use crate::schema::*;
 use diesel::QueryResult;
+
 use serde::{Deserialize, Serialize};
 use diesel_async::RunQueryDsl;
-
 
 type Connection = diesel_async::pooled_connection::deadpool::Object<diesel_async::AsyncPgConnection>;
 
@@ -28,7 +28,7 @@ pub struct CreateTodo {
     pub completed: bool,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Queryable, Insertable, AsChangeset)]
+#[derive(Debug, Serialize, Deserialize, Clone, Queryable, Insertable, AsChangeset, Default)]
 #[diesel(table_name=todos)]
 pub struct UpdateTodo {
     pub unsigned: Option<u32>,

@@ -1,10 +1,10 @@
-/* This file is generated and managed by dsync */
+/* @generated and managed by dsync */
 
 use crate::diesel::*;
 use crate::schema::*;
 use diesel::QueryResult;
-use serde::{Deserialize, Serialize};
 
+use serde::{Deserialize, Serialize};
 
 type Connection = diesel::r2d2::PooledConnection<diesel::r2d2::ConnectionManager<diesel::PgConnection>>;
 
@@ -24,7 +24,7 @@ pub struct CreateUser {
     pub secret: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Queryable, Insertable, AsChangeset)]
+#[derive(Debug, Serialize, Deserialize, Clone, Queryable, Insertable, AsChangeset, Default)]
 #[diesel(table_name=users)]
 pub struct UpdateUser {
     pub secret: Option<String>,
